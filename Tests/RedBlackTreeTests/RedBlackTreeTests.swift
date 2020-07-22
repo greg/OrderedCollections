@@ -47,6 +47,11 @@ final class RedBlackTreeTests: XCTestCase {
             XCTAssert(t.map({ $0.0 }).elementsEqual(nums))
         }
     }
+    
+    func testDuplicateInsert() {
+        let t: RedBlackTree = [3: 1, 3: 3, 3: 2, 3: 5, 3: 7, 3: -1]
+        XCTAssertEqual(Array(t).map(\.value), [1, 3, 2, 5, 7, -1])
+    }
 
     func testIndexing() {
         var a = RedBlackTree<Int, ()>([1, 2, 3, 4, 5].map { ($0, ()) })

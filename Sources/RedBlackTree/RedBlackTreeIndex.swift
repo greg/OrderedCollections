@@ -100,7 +100,7 @@ public struct RedBlackTreeIndex<Key: Comparable, Value> {
 extension RedBlackTreeIndex: IteratorProtocol {
     
     /// - Complexity: Amortised O(1) over a full iteration of the collection.
-    public mutating func next() -> (Key, Value)? {
+    public mutating func next() -> (key: Key, value: Value)? {
         switch kind {
         case .node(let u):
             defer {
