@@ -464,8 +464,12 @@ extension RedBlackTree: Collection {
     ///
     /// - Complexity: O(1)
     public subscript(index: Index) -> Element {
-        guard case .node(let u) = index.kind else { preconditionFailure("Cannot subscript an out-of-bounds index.") }
-        return (u.value.key, u.value.value)
+        switch index.kind {
+        case .node(let u):
+            return (u.value.key, u.value.value)
+        case .end, .empty:
+            preconditionFailure("Cannot subscript an out-of-bounds index.")
+        }
     }
 
     /// - Complexity: Amortised O(1) across a full iteration of the collection.
@@ -475,7 +479,7 @@ extension RedBlackTree: Collection {
 }
 
 extension RedBlackTree: RandomAccessCollection {
-    
+
     public func index(before i: Index) -> Index {
         return i.predecessor()
     }
@@ -498,13 +502,6 @@ extension RedBlackTree {
 extension RedBlackTree: ExpressibleByArrayLiteral {
 
     public init(arrayLiteral elements: Element...) {
-        self.init(elements)
-    }
-}
-
-extension RedBlackTree: ExpressibleByDictionaryLiteral {
-    
-    public init(dictionaryLiteral elements: (Key, Value)...) {
         self.init(elements)
     }
 }

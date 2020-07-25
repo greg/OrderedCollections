@@ -127,7 +127,7 @@ extension RedBlackTreeIndex: Equatable {
 }
 
 extension RedBlackTreeIndex: Comparable {
-    
+
     /// - Complexity: O(1)
     public static func < (lhs: RedBlackTreeIndex, rhs: RedBlackTreeIndex) -> Bool {
         switch (lhs.kind, rhs.kind) {

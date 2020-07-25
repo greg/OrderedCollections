@@ -49,7 +49,7 @@ final class RedBlackTreeTests: XCTestCase {
     }
     
     func testDuplicateInsert() {
-        let t: RedBlackTree = [3: 1, 3: 3, 3: 2, 3: 5, 3: 7, 3: -1]
+        let t: RedBlackTree = [(3, 1), (3, 3), (3, 2), (3, 5), (3, 7), (3, -1)]
         XCTAssertEqual(Array(t).map(\.value), [1, 3, 2, 5, 7, -1])
     }
 

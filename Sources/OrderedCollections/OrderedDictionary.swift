@@ -25,33 +25,37 @@
 //  SOFTWARE.
 //
 
+import Swift
 import RedBlackTree
 
-// TODO: this shouldn't just be a typealias, it should be a full wrapper, because RedBlackTree supports duplicate keys. the current RedBlackTreeIndex comparison function is probably wrong and should be removed.
-public typealias OrderedDictionary<Key: Comparable, Value> = RedBlackTree<Key, Value>
-
-extension OrderedDictionary {
+public struct OrderedDictionary<Key: Comparable, Value> {
+    
+    private var tree: RedBlackTree<Key, Value>
+    
+    init<S>(uniqueKeysWithValues keysAndValues: S) where S : Sequence, S.Element == (Key, Value) {
+        self.tree = RedBlackTree(keysAndValues)
+    }
     
     public subscript(key: Key) -> Value? {
         get {
-            guard let index = find(key) else { return nil }
-            return self[index].value
+            guard let index = tree.find(key) else { return nil }
+            return tree[index].value
         }
         set {
-            if let index = find(key) {
+            if let index = tree.find(key) {
                 if let newValue = newValue {
-                    updateValue(newValue, atIndex: index)
+                    tree.updateValue(newValue, atIndex: index)
                 }
                 else {
-                    remove(at: index)
+                    tree.remove(at: index)
                 }
             }
             else if let newValue = newValue {
-                insert(key, with: newValue)
+                tree.insert(key, with: newValue)
             }
         }
     }
-    
+
     public subscript(key: Key, default defaultValue: @autoclosure () -> Value) -> Value {
         get {
             return self[key] ?? defaultValue()
@@ -59,5 +63,38 @@ extension OrderedDictionary {
         set {
             self[key] = newValue
         }
+    }
+    
+    public var count: Int {
+        return 0
+    }
+}
+
+extension OrderedDictionary: Collection {
+    
+    public typealias Index = RedBlackTreeIndex<Key, Value>
+    public typealias Element = (key: Key, value: Value)
+    
+    public var startIndex: Index {
+        return tree.startIndex
+    }
+    
+    public var endIndex: Index {
+        return tree.endIndex
+    }
+    
+    public func index(after i: RedBlackTreeIndex<Key, Value>) -> Index {
+        return tree.index(after: i)
+    }
+    
+    public subscript(position: Index) -> Element {
+        return tree[position]
+    }
+}
+
+extension OrderedDictionary: ExpressibleByDictionaryLiteral {
+    
+    public init(dictionaryLiteral elements: (Key, Value)...) {
+        self.init(uniqueKeysWithValues: elements)
     }
 }
