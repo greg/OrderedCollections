@@ -300,6 +300,7 @@ public struct RedBlackTree<Key : Comparable, Value> {
     /// If this is the *first* modification to the tree since creation or copying, invalidates all indices with respect to `self`.
     ///
     /// - Complexity: O(1).
+    @discardableResult
     public mutating func updateValue(_ value: Value, atIndex index: Index) -> Value {
         precondition(index._safe, "Cannot update an index that is out of range.")
         let v = index.node!.value!
@@ -442,7 +443,7 @@ extension RedBlackTree: Sequence {
 
 extension RedBlackTree: Collection {
 
-    public typealias Element = (Key, Value)
+    public typealias Element = (key: Key, value: Value)
     public typealias Index = RedBlackTreeIndex<Key, Value>
 
     /// - Complexity: O(1)
@@ -463,8 +464,12 @@ extension RedBlackTree: Collection {
     ///
     /// - Complexity: O(1)
     public subscript(index: Index) -> Element {
-        guard case .node(let u) = index.kind else { preconditionFailure("Cannot subscript an out-of-bounds index.") }
-        return (u.value.key, u.value.value)
+        switch index.kind {
+        case .node(let u):
+            return (u.value.key, u.value.value)
+        case .end, .empty:
+            preconditionFailure("Cannot subscript an out-of-bounds index.")
+        }
     }
 
     /// - Complexity: Amortised O(1) across a full iteration of the collection.
@@ -474,7 +479,7 @@ extension RedBlackTree: Collection {
 }
 
 extension RedBlackTree: RandomAccessCollection {
-    
+
     public func index(before i: Index) -> Index {
         return i.predecessor()
     }
@@ -494,7 +499,7 @@ extension RedBlackTree {
 
 }
 
-extension RedBlackTree : ExpressibleByArrayLiteral {
+extension RedBlackTree: ExpressibleByArrayLiteral {
 
     public init(arrayLiteral elements: Element...) {
         self.init(elements)
